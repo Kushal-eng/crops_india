@@ -1,7 +1,8 @@
+import streamlit as st
 import pandas as pd
 
 # File path for the Excel sheet
-file_name = ""C:\Users\kotra\OneDrive\Desktop\kushal projects\crop_harvest_data.xlsx""
+file_name = "crop_harvest_data.xlsx"
 
 def create_excel():
     # Sample data
@@ -18,43 +19,34 @@ def create_excel():
 
     # Save to Excel
     df.to_excel(file_name, index=False)
-    print(f"Excel file '{file_name}' created successfully!")
+    st.success(f"Excel file '{file_name}' created successfully!")
 
 def update_excel():
-    # Load the Excel sheet
     try:
         df = pd.read_excel(file_name)
+        st.write("Current Data:", df)
     except FileNotFoundError:
-        print(f"The file '{file_name}' does not exist. Please create it first.")
+        st.error(f"The file '{file_name}' does not exist. Please create it first.")
         return
 
-    # Display existing data
-    print("Current Data:")
-    print(df)
-
-    # Example: Adding new data
-    new_data = {
+    # Adding new data
+    new_data = pd.DataFrame([{
         "Crop Name": "Soybean",
         "Region": "Madhya Pradesh",
         "Season": "Kharif",
         "Harvest Quantity (MT)": 2000,
         "Harvest Date": "2025-01-10",
-    }
-    df = df.append(new_data, ignore_index=True)
+    }])
+    df = pd.concat([df, new_data], ignore_index=True)
 
-    # Save the updated DataFrame to the Excel file
+    # Save updated file
     df.to_excel(file_name, index=False)
-    print("New data added and file updated successfully!")
+    st.success("New data added and file updated successfully!")
 
-# Main function
-if __name__ == "__main__":
-    print("1. Create Excel")
-    print("2. Update Excel")
-    choice = int(input("Enter your choice: "))
+st.title("Crop Harvest Data Manager")
 
-    if choice == 1:
-        create_excel()
-    elif choice == 2:
-        update_excel()
-    else:
-        print("Invalid choice!")
+if st.button("Create Excel"):
+    create_excel()
+
+if st.button("Update Excel"):
+    update_excel()
